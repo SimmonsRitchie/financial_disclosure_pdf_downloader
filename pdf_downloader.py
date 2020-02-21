@@ -19,9 +19,9 @@ def main():
     list_of_filing_ids = [
         "336344",  # samuel doctor
         "331887",  # phil heasley
-        "332791"  # Andre Del Valle
+        "332791",  # Andre Del Valle
+        "209028"  # thomas murt
     ]
-    filing_id = "336344"
 
     # create or clean up PDF download dir
     if DIR_DATA.is_dir():
