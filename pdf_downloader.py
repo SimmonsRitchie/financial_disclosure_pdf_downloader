@@ -2,8 +2,8 @@
 from pathlib import Path
 import logging
 from definitions import DIR_DATA
-from sfi_downloader.helper.misc import delete_dir_contents
-from sfi_downloader.scrape.get_pdf import get_pdf
+from pdf_downloader.helper.misc import delete_dir_contents
+from pdf_downloader.scrape.get_pdf import get_pdf
 from logs.config.logging import logs_config
 
 def main():
