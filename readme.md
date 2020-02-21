@@ -11,7 +11,7 @@ Python script to download PDFs of statements of financial interest from the webs
 
 1. Open the terminal. Clone the project repo
 
-    `git clone https://github.com/SimmonsRitchie/financial_disclosure_downloader.git`
+    `git clone https://github.com/SimmonsRitchie/financial_disclosure_pdf_downloader.git`
 
 2. If you don't have pipenv installed on your machine, run:
 
@@ -19,7 +19,7 @@ Python script to download PDFs of statements of financial interest from the webs
 
 3. Navigate into the project directory:
 
-    `cd financial_disclosure_downloader`
+    `cd financial_disclosure_pdf_downloader`
      
 4. Use pipenv to create a virtual environment and install the project 
 dependencies. Run:
