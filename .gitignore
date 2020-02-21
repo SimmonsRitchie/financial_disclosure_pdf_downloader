@@ -1,6 +1,7 @@
 ### Project unique
 data/
 .idea/
+logs/output/
 
 # Created by .ignore support plugin (hsz.mobi)
 ### Python template
