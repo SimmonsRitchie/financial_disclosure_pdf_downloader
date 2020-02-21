@@ -13,7 +13,12 @@ def main():
     logging.info('Beginning scrape')
 
     # filing ID
-    filing_id = "336397"
+    list_of_filing_ids = [
+        "336344",  # samuel doctor
+        "331887",  # phil heasley
+        "332791"
+    ]
+    filing_id = "336344"
 
     # create or clean up PDF download dir
     if DIR_DATA.is_dir():
@@ -23,7 +28,11 @@ def main():
         DIR_DATA.mkdir()
 
     # get pdf
-    get_pdf(filing_id)
+    for filing_id in list_of_filing_ids:
+        get_pdf(filing_id)
+
+    # complete
+    logging.info("Scrape complete")
 
 
 if __name__ == '__main__':

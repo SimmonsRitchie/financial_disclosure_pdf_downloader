@@ -4,11 +4,15 @@ import json
 import re
 import logging
 from definitions import DIR_DATA
+import urllib.parse as parse
 
-
-def get_pdf(filing_id):
+def get_pdf(filing_id, page_range = "",watermark="0"):
 
     logging.info(f'Scraping SFI with ID: {filing_id}')
+
+    # encode URL fragments
+    page_range_encoded = parse.quote(page_range)
+    watermark_encoded = parse.quote(watermark)
 
     # create a session
     s = requests.Session()
@@ -21,7 +25,10 @@ def get_pdf(filing_id):
 
     # post GeneratedPDF endpoint
     logging.info("POST GeneratePDF endpoint...")
-    gen_pdf_url = f"https://www.ethicsrulings.pa.gov/WebLink/GeneratePDF10.aspx?key={filing_id}&PageRange=1%20-%206&Watermark=0"
+
+    gen_pdf_url = f"https://www.ethicsrulings.pa.gov/WebLink/GeneratePDF10.aspx?key={filing_id}&PageRange=" \
+                  f"{page_range_encoded}&Watermark={watermark_encoded}"
+    # gen_pdf_url = f"https://www.ethicsrulings.pa.gov/WebLink/GeneratePDF10.aspx?key={filing_id}&PageRange=1%20-%206&Watermark=0"
     r = s.post(gen_pdf_url)
     assert (r.status_code == 200), "Error accessing GeneratedPDF endpoint"
 
@@ -58,14 +65,11 @@ def get_pdf(filing_id):
         quit()
 
     # get pdf
+    filename = f"{filing_id}.pdf"
     logging.info('Downloading PDF...')
-    download_pdf_url = f"https://www.ethicsrulings.pa.gov/WebLink/PDF/{key}/2020" \
-                       f"%20William%20Benner.pdf"
+    download_pdf_url = f"https://www.ethicsrulings.pa.gov/WebLink/PDF/{key}/{filename}"
     r = s.get(download_pdf_url)
-    assert (r.status_code == 200), ""
-    content_disp = r.headers['content-disposition']
-    filing_name = re.findall("filename=(.+)", content_disp)[0].strip('"')
-    filename = f"{filing_id}__{filing_name}"
+    assert (r.status_code == 200), "Something went wrong with PDF download"
     download_path = DIR_DATA / filename
     with open(download_path, 'wb') as f:
         f.write(r.content)
