@@ -17,7 +17,7 @@ def get_pdf(filing_id, page_range = "",watermark="0"):
     s = requests.Session()
 
     # STEP 1: get document page
-    # we access this endpoint in order to get cookies that we need to generate a key. It might be possible to skip
+    # we access this endpoint in order to get cookies that we need to generate a key. It's probably possible to skip
     # this step and fake the info from these cookies in step 2 but I need to investigate further.
     logging.info("Send GET request to DocView page...")
     url = f"https://www.ethicsrulings.pa.gov/WebLink/DocView.aspx?id={filing_id}&dbid=0&repo=EthicsLF8"
