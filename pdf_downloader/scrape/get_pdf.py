@@ -34,8 +34,8 @@ def get_pdf(filing_id, page_range = "",watermark="0"):
     assert (r.status_code == 200), "Error accessing GeneratedPDF endpoint"
 
     # get key
-    # The response we get appears to be malformed: get a key and some html. We get the key by just taking the first
-    # line of the response
+    # The response we get appears to be malformed: you'll get a key and some html. We get the key by just taking the
+    # first line of the response body.
     key = r.text.splitlines()[0].strip()
     assert (key), "No key found"
 
