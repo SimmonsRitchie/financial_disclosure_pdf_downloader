@@ -17,15 +17,17 @@ def get_pdf(filing_id, page_range = "",watermark="0"):
     # create a session
     s = requests.Session()
 
-    # get document page
-    # we access this endpoint in order to get cookies that we need to generate a key
+    # STEP 1: get document page
+    # we access this endpoint in order to get cookies that we need to generate a key. It might be possible to skip
+    # this step and fake the info from these cookies in step 2 but I need to investigate further.
     logging.info("Send GET request to DocView page...")
     url = f"https://www.ethicsrulings.pa.gov/WebLink/DocView.aspx?id={filing_id}&dbid=0&repo=EthicsLF8"
     r = s.get(url)
     assert (r.status_code == 200), "Error accessing DocView page"
 
-    # post GeneratedPDF endpoint
-    # we access this endpoint in order to get a key from the response body that we will use to get the actual PDF
+    # STEP 2: post GeneratedPDF endpoint + get key
+    # We access the GeneratedPDF endpoint in order to get a key from the response body that we will use to get the
+    # actual PDF
     logging.info("Send POST request to GeneratePDF endpoint...")
 
     gen_pdf_url = f"https://www.ethicsrulings.pa.gov/WebLink/GeneratePDF10.aspx?key={filing_id}&PageRange=" \
@@ -42,7 +44,7 @@ def get_pdf(filing_id, page_range = "",watermark="0"):
     # double check what our key looks like, should be something like: c307abb8-3d15-4cbf-95f3-b2f4f91a374f​
     logging.info(f"Key provided: {key}")
 
-    # wait for pdf to be downloadable
+    # Step 3:  wait for pdf to be downloadable
     # the resource at this endpoint tells the client whether the PDF is ready to download. We keep checking it
     # until it tells us the PDF is ready.
     check_pdf_generated_url = "https://www.ethicsrulings.pa.gov/WebLink/DocumentService.aspx/PDFTransition"
@@ -68,10 +70,10 @@ def get_pdf(filing_id, page_range = "",watermark="0"):
         logging.error(e)
         quit()
 
-    # get pdf
+    # Step 4: get pdf
     # we access a different endpoint to download the actual PDF. The end part of the URL - filename - seems to be
-    # arbitrary. You can use any word here as long as it ends with '.pdf' and the file will download. The
-    # important thing is the key in the URL.
+    # arbitrary. You can use any word here as long as it ends with '.pdf' and you will get a PDF in response.
+    # The important thing is the key in the URL. In this case, I just used the filing_id but, again, this is arbitrary.
     filename = f"{filing_id}.pdf"
     logging.info('Downloading PDF...')
     download_pdf_url = f"https://www.ethicsrulings.pa.gov/WebLink/PDF/{key}/{filename}"
