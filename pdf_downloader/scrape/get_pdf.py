@@ -18,21 +18,24 @@ def get_pdf(filing_id, page_range = "",watermark="0"):
     s = requests.Session()
 
     # get document page
-    logging.info("GET DocView page...")
+    # we access this endpoint in order to get cookies that we need to generate a key
+    logging.info("Send GET request for DocView page...")
     url = f"https://www.ethicsrulings.pa.gov/WebLink/DocView.aspx?id={filing_id}&dbid=0&repo=EthicsLF8"
     r = s.get(url)
     assert (r.status_code == 200), "Error accessing DocView page"
 
     # post GeneratedPDF endpoint
-    logging.info("POST GeneratePDF endpoint...")
+    # we access this endpoint in order to get a key that we will use to get the actual PDF
+    logging.info("Send POST request GeneratePDF endpoint...")
 
     gen_pdf_url = f"https://www.ethicsrulings.pa.gov/WebLink/GeneratePDF10.aspx?key={filing_id}&PageRange=" \
                   f"{page_range_encoded}&Watermark={watermark_encoded}"
-    # gen_pdf_url = f"https://www.ethicsrulings.pa.gov/WebLink/GeneratePDF10.aspx?key={filing_id}&PageRange=1%20-%206&Watermark=0"
     r = s.post(gen_pdf_url)
     assert (r.status_code == 200), "Error accessing GeneratedPDF endpoint"
 
     # get key
+    # The response we get appears to be malformed: get a key and some html. We get the key by just taking the first
+    # line of the response
     key = r.text.splitlines()[0].strip()
     assert (key), "No key found"
 
@@ -40,6 +43,8 @@ def get_pdf(filing_id, page_range = "",watermark="0"):
     logging.info(f"Key provided: {key}")
 
     # wait for pdf to be downloadable
+    # this endpoint tells the client whether the PDF is ready to download or not. We keep checking it until the file is
+    # ready before downloading.
     check_pdf_generated_url = "https://www.ethicsrulings.pa.gov/WebLink/DocumentService.aspx/PDFTransition"
     payload = {"Key": key}
     logging.info("Waiting for PDF to be generated...")
@@ -48,7 +53,6 @@ def get_pdf(filing_id, page_range = "",watermark="0"):
     try:
         for count in range(0, max_iterations_to_wait):
             time.sleep(sleep_time)
-            # r = s.post(check_pdf_generated_url, data=payload)
             payload_str = json.dumps(payload)
             r = s.post(check_pdf_generated_url, data=payload_str)
             r_json = r.json()
