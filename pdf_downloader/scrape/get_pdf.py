@@ -1,7 +1,6 @@
 import requests
 import time
 import json
-import re
 import logging
 from definitions import DIR_DATA
 import urllib.parse as parse
