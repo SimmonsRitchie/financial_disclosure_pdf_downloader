@@ -39,12 +39,12 @@ def get_pdf(filing_id, page_range = "",watermark="0"):
     key = r.text.splitlines()[0].strip()
     assert (key), "No key found"
 
-    # view
+    # double check what our key looks like, should be something like: c307abb8-3d15-4cbf-95f3-b2f4f91a374f​
     logging.info(f"Key provided: {key}")
 
     # wait for pdf to be downloadable
-    # this endpoint tells the client whether the PDF is ready to download or not. We keep checking it until it tells
-    # us the PDF is ready.
+    # the resource at this endpoint tells the client whether the PDF is ready to download. We keep checking it
+    # until it tells us the PDF is ready.
     check_pdf_generated_url = "https://www.ethicsrulings.pa.gov/WebLink/DocumentService.aspx/PDFTransition"
     payload = {"Key": key}
     logging.info("Waiting for PDF to be generated...")
@@ -70,8 +70,8 @@ def get_pdf(filing_id, page_range = "",watermark="0"):
 
     # get pdf
     # we access a different endpoint to download the actual PDF. The end part of the URL - filename - seems to be
-    # arbitrary. You can use any word here as long as it ends with '.pdf' here and the file will download. The
-    # important thing is the key.
+    # arbitrary. You can use any word here as long as it ends with '.pdf' and the file will download. The
+    # important thing is the key in the URL.
     filename = f"{filing_id}.pdf"
     logging.info('Downloading PDF...')
     download_pdf_url = f"https://www.ethicsrulings.pa.gov/WebLink/PDF/{key}/{filename}"
