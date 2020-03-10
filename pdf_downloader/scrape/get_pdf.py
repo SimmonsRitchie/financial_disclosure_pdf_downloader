@@ -7,6 +7,17 @@ import urllib.parse as parse
 
 def get_pdf(filing_id, page_range = "",watermark="0"):
 
+    """
+    Takes filing ID number and accesses API endpoints of Ethics Commission website to download PDF
+
+    @params - required:
+    filing_id (int): Filing ID of filer
+
+    @params - optional:
+    page_range (str): Query parameter for generatePDF10 endpoint. Not required to get PDF.
+    watermark (int): Query parameter for generatePDF10 endpoint. Not required to get PDF.
+    """
+
     logging.info(f'Scraping SFI with ID: {filing_id}')
 
     # encode URL fragments
